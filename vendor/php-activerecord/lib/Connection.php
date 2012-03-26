@@ -155,7 +155,7 @@ abstract class Connection
 	public static function parse_connection_url($connection_url)
 	{
 		$url = @parse_url($connection_url);
-
+		
 		if (!isset($url['host']))
 			throw new DatabaseException('Database host must be specified in the connection string. If you want to specify an absolute filename, use e.g. sqlite://unix(/path/to/file)');
 
@@ -165,7 +165,7 @@ abstract class Connection
 		$info->db = isset($url['path']) ? substr($url['path'], 1) : null;
 		$info->user = isset($url['user']) ? $url['user'] : null;
 		$info->pass = isset($url['pass']) ? $url['pass'] : null;
-
+		
 		$allow_blank_db = ($info->protocol == 'sqlite');
 
 		if ($info->host == 'unix(')
@@ -210,6 +210,8 @@ abstract class Connection
 
 				if ($name == 'charset')
 					$info->charset = $value;
+				if ($name == 'dbprefix')
+					$info->dbprefix = $value;
 			}
 		}
 
@@ -237,6 +239,7 @@ abstract class Connection
 				$host = "unix_socket=$info->host";
 
 			$this->connection = new PDO("$info->protocol:$host;dbname=$info->db", $info->user, $info->pass, static::$PDO_OPTIONS);
+			$this->connection->dbprefix = $info->dbprefix;
 		} catch (PDOException $e) {
 			throw new DatabaseException($e);
 		}

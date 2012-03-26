@@ -36,12 +36,20 @@ class PHPActiveRecord {
             foreach ($db as $conn_name => $conn)
             {
                 // Build the DSN string for each connection
+                /* MODIFIED TO INCLUDE DBPREFIX FROM CODEIGNITER
+                 * $connections[$conn_name] =       $conn['dbdriver'].
+                                    '://'       .$conn['username'].
+                                    ':'         .$conn['password'].
+                                    '@'         .$conn['hostname'].
+                                    '/'         .$conn['database'].
+                                    '?charset=' .$conn['char_set'];*/
                 $connections[$conn_name] =       $conn['dbdriver'].
                                     '://'       .$conn['username'].
                                     ':'         .$conn['password'].
                                     '@'         .$conn['hostname'].
                                     '/'         .$conn['database'].
-                                    '?charset=' .$conn['char_set'];
+                                    '?charset=' .$conn['char_set'].
+                                    '/&/dbprefix='.$conn['dbprefix'];
             }
 
             // Initialize PHPActiveRecord

@@ -24,7 +24,7 @@ class Table
 
 	// Name/value pairs of columns in this table
 	public $columns = array();
-
+	
 	/**
 	 * Name of the table.
 	 */
@@ -428,9 +428,12 @@ class Table
 	}
 
 	private function set_table_name()
-	{
-		if (($table = $this->class->getStaticPropertyValue('table',null)) || ($table = $this->class->getStaticPropertyValue('table_name',null)))
+	{		
+		if (($table = $this->class->getStaticPropertyValue('table',null)) 
+			|| ($table = $this->class->getStaticPropertyValue('table_name',null)))
+		{
 			$this->table = $table;
+		}
 		else
 		{
 			// infer table name from the class name
@@ -438,9 +441,17 @@ class Table
 
 			// strip namespaces from the table name if any
 			$parts = explode('\\',$this->table);
-			$this->table = $parts[count($parts)-1];
+			$table = $parts[count($parts)-1];
+			// HACK FOR PREFIX:
+			// Original line, commented
+		    //$this->table = $parts[count($parts)-1];
+			// REPLACED BY:
+			$this->table = ($this->conn->connection->dbprefix) 
+				? $this->conn->connection->dbprefix.$table:$table;
+			// END HACK
 		}
-
+		
+		
 		if(($db = $this->class->getStaticPropertyValue('db',null)) || ($db = $this->class->getStaticPropertyValue('db_name',null)))
 			$this->db_name = $db;
 	}
